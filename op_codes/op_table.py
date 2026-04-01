@@ -174,6 +174,11 @@ op_table = {
         "opcode": 0x54,
         "operand_exits": True
     },
+    "STL":
+    {
+        "opcode": 0x14,
+        "operand_exits": True
+    },
     "STT":
     {
         "opcode": 0x84,
