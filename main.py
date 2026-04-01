@@ -2,7 +2,7 @@ from core.pass1 import read_file, pass1, print_symtab, calculate_prog_length
 import argparse
 
 def main():
-    parser = argparse.ArgumentParser(description="Pass 1 of SIC assembler")
+    parser = argparse.ArgumentParser(description="SIC assembler")
     parser.add_argument("-filename", help="Input assembly file")
 
     args = parser.parse_args()
