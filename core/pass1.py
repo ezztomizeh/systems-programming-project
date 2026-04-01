@@ -1,12 +1,15 @@
 from op_codes.op_table import op_table
 from prettytable import PrettyTable
+import argparse
 
 SYMTAB = {}
 LOCCTR = None
 PROGNAME = None
+PRGLTH = None
 
 table = PrettyTable()
 table.field_names = ["Symbol", "Address"]
+
 
 def check_opcode(opcode: str) -> bool:
     if opcode in op_table:
@@ -35,23 +38,27 @@ def add_symbol(symbol: str, address: int) -> None:
     SYMTAB[symbol] = address
 
  
-def analyze_lines(line: str) -> None:
-    line = line.strip()
-    if line.startswith(".") or line.startswith(";") or line == "":
+def analyze_lines(line: str) -> tuple:
+    line = line.rstrip()
+
+    if not line or line.startswith(".") or line.startswith(";"):
         return None
+
     parts = line.split()
+
+    label = None
+    opcode = None
+    operand = None
+
     if len(parts) == 3:
         label, opcode, operand = parts
     elif len(parts) == 2:
-        label = None
         opcode, operand = parts
     elif len(parts) == 1:
-        label = None
         opcode = parts[0]
-        operand = None
     else:
-        raise ValueError("Invalid line format")
-    
+        raise ValueError(f"Invalid line: {line}")
+
     return label, opcode, operand
 
 
@@ -78,17 +85,21 @@ def pass1(lines: list) -> None:
         set_progname(first_label)
         set_loctr()
 
-    intermediate_file = open("intermediate.txt", "w")
+    intermediate_file = open(f"./output/intermediate_{PROGNAME}.mdt", "w")
     
-    for line in lines[1:]:
+    for line in lines[0:]:
         result = analyze_lines(line)
         if result is None:
             continue
         label, opcode, operand = result
+        print(f"{hex(LOCCTR)}\t{line.strip()}", file=intermediate_file)
+
+        if opcode == "START":
+            add_symbol(label, LOCCTR)
+            continue
 
         if opcode == "END":
             break
-
         if label is not None:
             if check_symbol(label):
                 raise ValueError(f"Duplicate symbol: {label}")
@@ -119,11 +130,11 @@ def print_symtab():
         table.add_row([symbol, hex(address)])
     print(table)
 
-
-def main():
-    lines = read_file("sample_code.txt")
-    pass1(lines)
-    print_symtab()
-
-if __name__ == "__main__":
-    main()
+def calculate_prog_length():
+    global PRGLTH
+    if PROGNAME is None:
+        raise ValueError("Program name is not set")
+    if LOCCTR is None:
+        raise ValueError("LOCCTR is not set")
+    PRGLTH = LOCCTR - int(SYMTAB[PROGNAME])
+    return PRGLTH

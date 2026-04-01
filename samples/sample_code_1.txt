@@ -1,12 +1,15 @@
 COPY    START      1000
 FIRST   STL        RETADR
-CLOOP   LDA        LENGTH
+CLOOP   JSUB       RDREC
+        LDA        LENGTH
         COMP       ZERO
         JEQ        ENDFIL
         JSUB       WRREC
         J          CLOOP
 ENDFIL  LDA        EOF
         STA        BUFFER
+        LDA        THREE
+        STA        LENGTH
         JSUB       WRREC
         LDL        RETADR
         RSUB
