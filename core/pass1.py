@@ -84,25 +84,29 @@ def pass1(lines: list, output_file: str) -> None:
     if first_line is None:
         raise ValueError("First line is empty or a comment")
     
-
+    intermediate_file = open(f"./output/{output_file}", "w")
     first_label, first_opcode, first_operand = first_line
 
     if first_opcode == "START":
         set_progname(first_label)
         set_loctr(int(first_operand, 16))
         add_symbol(first_label, LOCCTR)
+        print(f"{hex(LOCCTR)}\t{lines[0].strip()}", file=intermediate_file)
     else:
         set_progname(first_label)
         set_loctr()
 
-    intermediate_file = open(f"./output/{output_file}", "w")
     
-    for line in lines[1:]:
+    for line in lines[0:]:
         line = remove_comments(line)
         result = analyze_lines(line)
         if result is None:
             continue
         label, opcode, operand = result
+
+        if opcode == "START":
+            continue
+
         print(f"{hex(LOCCTR)}\t{line.strip()}", file=intermediate_file)
 
         if opcode == "END":

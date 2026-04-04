@@ -1,3 +1,4 @@
+0x1000	COPY      START      1000              . This is a comment
 0x1000	FIRST     STL        RETADR
 0x1003	CLOOP     JSUB       RDREC
 0x1006	LDA        LENGTH
