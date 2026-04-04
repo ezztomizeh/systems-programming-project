@@ -3,11 +3,17 @@ INLOOP  TD         INDEV
         RD         INDEV
         STCH       DATA
 
+.Ezz Tomizi Write this file
+
 OUTLP   TD         OUTDEV
         JEQ        OUTLP
         LDCH       DATA
         WD         OUTDEV
 
 INDEV   BYTE       X'F1'
-OUTDEV  BYTE       X'05'
+OUTDEV  BYTE       X'05' . Trying to crash the assembler
 DATA    RESB        1     
+
+. Mutliple comments
+. Mutliple comments
+. Mutliple comments

@@ -91,7 +91,7 @@ def pass1(lines: list, output_file: str) -> None:
         set_progname(first_label)
         set_loctr(int(first_operand, 16))
         add_symbol(first_label, LOCCTR)
-        print(f"{hex(LOCCTR)}\t{lines[0].strip()}", file=intermediate_file)
+        print(f"{hex(LOCCTR)}\t{remove_comments(lines[0]).strip()}", file=intermediate_file)
     else:
         set_progname(first_label)
         set_loctr()
