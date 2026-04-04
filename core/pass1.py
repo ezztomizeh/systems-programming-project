@@ -1,6 +1,5 @@
 from op_codes.op_table import op_table
 from prettytable import PrettyTable
-import argparse
 
 SYMTAB = {}
 LOCCTR = None
@@ -37,10 +36,18 @@ def check_symbol(symbol: str) -> bool:
 def add_symbol(symbol: str, address: int) -> None:
     SYMTAB[symbol] = address
 
- 
+
+def remove_comments(line: str) -> str:
+    if "." in line:
+        return line.split(".")[0].rstrip()
+    elif ";" in line:
+        return line.split(";")[0].rstrip()
+    else:
+        return line.rstrip()
+
+
 def analyze_lines(line: str) -> tuple:
     line = line.rstrip()
-
     if not line or line.startswith(".") or line.startswith(";"):
         return None
 
@@ -69,34 +76,34 @@ def read_file(filename: str) -> list:
     return lines
 
 
-def pass1(lines: list) -> None:
+def pass1(lines: list, output_file: str) -> None:
     global LOCCTR
 
-    first_line = analyze_lines(lines[0])
+    first_line = remove_comments(lines[0])
+    first_line = analyze_lines(first_line)
     if first_line is None:
         raise ValueError("First line is empty or a comment")
+    
 
     first_label, first_opcode, first_operand = first_line
 
     if first_opcode == "START":
         set_progname(first_label)
         set_loctr(int(first_operand, 16))
+        add_symbol(first_label, LOCCTR)
     else:
         set_progname(first_label)
         set_loctr()
 
-    intermediate_file = open(f"./output/intermediate_{PROGNAME}.mdt", "w")
+    intermediate_file = open(f"./output/{output_file}", "w")
     
-    for line in lines[0:]:
+    for line in lines[1:]:
+        line = remove_comments(line)
         result = analyze_lines(line)
         if result is None:
             continue
         label, opcode, operand = result
         print(f"{hex(LOCCTR)}\t{line.strip()}", file=intermediate_file)
-
-        if opcode == "START":
-            add_symbol(label, LOCCTR)
-            continue
 
         if opcode == "END":
             break
