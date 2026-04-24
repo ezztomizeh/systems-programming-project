@@ -84,7 +84,7 @@ def pass1(lines: list, output_file: str) -> None:
     if first_line is None:
         raise ValueError("First line is empty or a comment")
     
-    intermediate_file = open(f"./output/{output_file}", "w")
+    intermediate_file = open(f"./output/intermediate_files/{output_file}", "w")
     first_label, first_opcode, first_operand = first_line
 
     if first_opcode == "START":

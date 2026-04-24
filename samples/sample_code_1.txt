@@ -32,7 +32,7 @@ RLOOP     TD         INPUT
           STCH       BUFFER,X
           TIX        MAXLEN
           JLT        RLOOP
-EXIST     STX        LENGTH
+EXIT     STX        LENGTH
           RSUB
 INPUT     BYTE       X'F1'
 MAXLEN    WORD       4096
